@@ -14,6 +14,16 @@
 
     <EditTextPreference
         android:capitalize="words"
+        android:defaultValue="2"
+        android:inputType="textCapWords"
+        android:key="key_chat_session_messages"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Chat Session Messages" />
+
+    <EditTextPreference
+        android:capitalize="words"
         android:defaultValue="@string/pref_default_server_uri"
         android:inputType="textUri"
         android:key="key_server_uri"

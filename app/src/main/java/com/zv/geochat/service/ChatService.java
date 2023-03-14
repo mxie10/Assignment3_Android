@@ -32,6 +32,7 @@ public class ChatService extends Service {
     private ChatMessageStore chatMessageStore;
 
     private String myName;
+    private String messageCount;
 
     public ChatService() {
     }
@@ -103,6 +104,29 @@ public class ChatService extends Service {
             stopSelf();
         } else if (command == CMD_SEND_MESSAGE) {
             String messageText = (String) data.get(KEY_MESSAGE_TEXT);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            messageCount = prefs.getString(Constants.PREF_KEY_CHAT_SESSION_MESSAGES, "0");
+            if (prefs.contains("messageCount")) {
+                // The preference exists, update its value
+                SharedPreferences.Editor editor = prefs.edit();
+                String value = prefs.getString("messageCount", "0");
+                if(Integer.parseInt(value) >= Integer.parseInt(messageCount)){
+                    String textMessage = "Session closed after reaching the limit: X messages";
+                    textMessage = textMessage.replace("X", value);
+                    notificationDecorator.displayExpandableNotification("Service Stopped",textMessage);
+                    chatMessageStore.insert(new ChatMessage(myName, textMessage));
+                    sendBroadcastSessionClosedMessage(myName, textMessage);
+                    return;
+                }
+                editor.putString("messageCount", Integer.parseInt(value)+1 + "");
+                editor.apply();
+            } else {
+                // The preference does not exist, create it with default value 1
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("messageCount", "1");
+                editor.apply();
+            }
             notificationDecorator.displayExpandableNotification("Sending message...", messageText);
             chatMessageStore.insert(new ChatMessage(myName, messageText));
             sendBroadcastNewMessage(myName, messageText);
@@ -169,6 +193,28 @@ public class ChatService extends Service {
         Log.d(TAG, "->(+)<- sending broadcast: BROADCAST_NEW_MESSAGE");
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_NEW_MESSAGE);
+
+        Bundle data = new Bundle();
+        data.putString(Constants.CHAT_MESSAGE, message);
+        data.putString(Constants.CHAT_USER_NAME, userName);
+        intent.putExtras(data);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        messageCount = prefs.getString(Constants.PREF_KEY_CHAT_SESSION_MESSAGES, "0");
+
+        SharedPreferences.Editor editor = prefs.edit();
+        String value = prefs.getString("messageCount", "0");
+
+        if(Integer.parseInt(value) > Integer.parseInt(messageCount)){
+            stopService(intent);
+        }
+        sendBroadcast(intent);
+    }
+
+    private void sendBroadcastSessionClosedMessage(String userName, String message) {
+        Log.d(TAG, "->(+)<- sending broadcast: BROADCAST_NEW_MESSAGE");
+        Intent intent = new Intent();
+        intent.setAction(Constants.BROADCAST_SESSION_CLOSED_AFTER_GET_LIMITS);
 
         Bundle data = new Bundle();
         data.putString(Constants.CHAT_MESSAGE, message);

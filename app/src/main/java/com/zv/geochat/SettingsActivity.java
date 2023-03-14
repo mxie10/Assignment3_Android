@@ -191,6 +191,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(Constants.PREF_KEY_USER_NAME));
             bindPreferenceSummaryToValue(findPreference(Constants.PREF_KEY_SERVER_URI));
+            bindPreferenceSummaryToValue(findPreference(Constants.PREF_KEY_CHAT_SESSION_MESSAGES));
         }
 
         @Override

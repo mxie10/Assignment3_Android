@@ -123,6 +123,11 @@ public class ChatActivityFragment extends Fragment {
                 String message = data.getString(Constants.CHAT_MESSAGE);
                 ChatMessage chatMessage = new ChatMessage(userName, message);
                 displayMessage(chatMessage);
+            }else if (Constants.BROADCAST_SESSION_CLOSED_AFTER_GET_LIMITS.equals(action)) {
+                String userName = data.getString(Constants.CHAT_USER_NAME);
+                String message = data.getString(Constants.CHAT_MESSAGE);
+                ChatMessage chatMessage = new ChatMessage(userName, message);
+                displayMessage(chatMessage);
             } else if (Constants.BROADCAST_USER_TYPING.equals(action)) {
                 // TODO
             } else {
@@ -141,6 +146,7 @@ public class ChatActivityFragment extends Fragment {
         intentFilter.addAction(Constants.BROADCAST_SERVER_NOT_CONNECTED);
         intentFilter.addAction(Constants.BROADCAST_USER_JOINED);
         intentFilter.addAction(Constants.BROADCAST_USER_LEFT);
+        intentFilter.addAction(Constants.BROADCAST_SESSION_CLOSED_AFTER_GET_LIMITS);
         getActivity().registerReceiver(mServiceStateChangeReceiver, intentFilter);
     }
 }

@@ -7,7 +7,7 @@ public class GeoChatProviderMetadata {
 
 	public static final String AUTHORITY = "com.zv.geochat.provider.GeoChatProvider";
 	public static final String DATABASE_NAME = "geochat.db";
-	public static final int DATABASE_VERSION = 1;
+	public static final int DATABASE_VERSION = 5;
 
 	private GeoChatProviderMetadata() {
 	}
@@ -16,7 +16,7 @@ public class GeoChatProviderMetadata {
 		private ChatMessageTableMetaData() {
 		}
 
-		public static final String TABLE_NAME = "chat_message";
+		public static final String TABLE_NAME = "chat_message_1";
 		// uri and MIME type definitions
 		public static final Uri CONTENT_URI = Uri.parse("content://"
 				+ AUTHORITY + "/" + ChatMessageTableMetaData.TABLE_NAME);
